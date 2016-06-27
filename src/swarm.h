@@ -15,6 +15,7 @@
 
 #include <ctime>
 #include <vector>
+#include <random>
 #include "structs.h"
 
 using namespace std;
@@ -36,6 +37,11 @@ class Swarm_method
     void read_input(); //Read input
     void initialize(); //Initialize the system
     void load_string(); //Load a full initial string
+    void write_string(); //Write the full string
+    void restrained_sampling(); //Do restrained sampling for equilibrium states
+    void generate_swarms(); //Generate swarms of unbiased trajectories
+    void evolve_cv(); //Evolves the CVs using an estimate of the drift
+    void reparametrize(); //Reparametrize the string
 };
 
 #endif

@@ -20,4 +20,4 @@ $(EXECU): ${OBJCS}
 	${CMPLR} ${CFLGS} ${OBJCS} -o $@
 
 clean:
-	rm -f ${OBJCS} swarm
+	rm -f ${OBJCS} *.out swarm
