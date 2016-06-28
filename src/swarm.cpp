@@ -129,6 +129,7 @@ void Swarm_method::load_string()
 void Swarm_method::write_string()
 {
     ofstream string_out ("string.out");
+    ofstream py_string  ("string.txt"); //For visualization in python
     int i; //Loop indexing
     double dx, dy, dr2;
 
@@ -139,6 +140,7 @@ void Swarm_method::write_string()
         if(i == 0)
         {
             string_out << swarm_string[i].x << "\t\t" << swarm_string[i].y << "\t\t" << "0" << endl;
+            py_string << swarm_string[i].x << " " << swarm_string[i].y << " \n";
         }
         else
         {
@@ -146,10 +148,20 @@ void Swarm_method::write_string()
             dy = swarm_string[i].y - swarm_string[i-1].y;
             dr2 = dx*dx + dy*dy;
             string_out << swarm_string[i].x << "\t\t" << swarm_string[i].y << "\t\t" << sqrtl(dr2) << endl;
+            if(i == sim.images - 1)
+            {
+                py_string << swarm_string[i].x << " " << swarm_string[i].y;
+            }
+            else
+            {
+                py_string << swarm_string[i].x << " " << swarm_string[i].y << " \n";
+            }
+
         }
     }
 
     string_out.close();
+    py_string.close(); 
 }
 
 void Swarm_method::run_swarm()
@@ -239,6 +251,7 @@ void Swarm_method::generate_swarms()
     normal_distribution<double> normal_dist(0, 1); //Random number generator, mean 0, variance 1
     double zeta_xn, eta_xn, zeta_yn, eta_yn; //Random numbers
     string debug; //Debugging
+    double x0, y0; //Store the initial positions of each trajectory
 
     //Zero drift before starting the calculation
     for(i = 0; i < sim.images; i++)
@@ -268,6 +281,8 @@ void Swarm_method::generate_swarms()
                     y_n = distributiony(generator);
                     vx_n = 0; //Start velocities at zero - random motion will initiate them
                     vy_n = 0; 
+                    x0 = x_n; //Record initial position
+                    y0 = y_n;
                 }
 
                 //Generate random numbers
@@ -320,8 +335,8 @@ void Swarm_method::generate_swarms()
 
                 if(k == sim.l_trajectories)
                 {//After the last trajectory, record the amount of drift in the CV
-                    swarm_string[i].driftx += (x_n-swarm_string[i].x);
-                    swarm_string[i].drifty += (y_n-swarm_string[i].y); 
+                    swarm_string[i].driftx += (x_n-x0);
+                    swarm_string[i].drifty += (y_n-y0); 
                     //cout << swarm_string[i].driftx << " " << swarm_string[i].drifty << endl; //Debugging 
                 }
             }
@@ -362,7 +377,7 @@ void Swarm_method::reparametrize()
             dx = swarm_string[i].x - swarm_string[i-1].x;
             dy = swarm_string[i].y - swarm_string[i-1].y;
             distance = sqrtl(dx*dx+dy*dy); //Euclidean norm of z[i] - z[i-1]
-            arc_lengths[i] = arc_lengths[i-1] + distance;
+            arc_lengths[i] = arc_lengths[i-1] + distance;  //Approximating arc lengths as linear distance
             //cout << arc_lengths[i] << endl;
         }
     }
