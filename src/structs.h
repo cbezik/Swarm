@@ -25,7 +25,8 @@ struct parameters
     double time_step; //Time step for Langevin dynamics
     double mass; //Mass for LD
     double kT; //Temperature for LD
-    int potential_flag; //Potential flag, 1 = Mueller, 
+    int potential_flag; //Potential flag, 1 = Mueller
+    double tolerance; //Tolerance for stopping simulation
 };
 
 struct image

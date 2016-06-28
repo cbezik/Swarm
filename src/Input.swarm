@@ -1,16 +1,17 @@
 /***** String method info *****/
 
 24      Number of Images
-1       Load initial string?  0=no, specify initial states (initial.state, final.state) ; 1=yes, load entire string
-200     Maximum number of iterations
+0       Load initial string?  0=no, specify initial states (initial.state, final.state) ; 1=yes, load entire string
+1000     Maximum number of iterations
 1000    Number of trajectories per swarm
 100     Length of trajectories (time lag e.g. 100 steps, 1000 steps, etc)
+0       Tolerance (when no collective variable has moved by more than this, stop running)
 
 /**** Dynamics Info ****/
 100     Friction Coefficient
 0.0001  Time step
 5       Mass
-10      kT
+100      kT
 
 /**** Potential Info ****/
 1       Potential Flag (1 = Mueller)

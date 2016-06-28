@@ -3,7 +3,8 @@ CFLGS = -O3 -w -std=c++11 -g
 
 EXECU = ./swarm
 
-SRCES = swarm.cpp \
+SRCES = mueller.cpp\
+		swarm.cpp \
 		main.cpp \
 
 OBJCS := $(addsuffix .o, $(basename $(SRCES)))

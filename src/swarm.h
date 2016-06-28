@@ -17,31 +17,34 @@
 #include <vector>
 #include <random>
 #include "structs.h"
+#include "mueller.h"
 
 using namespace std;
 
 class Swarm_method
 {
     public:
+        //Vectors and important objects
+        clock_t start, end;
+        time_t sim_time;
+        parameters sim; 
+        vector<image> swarm_string; //Vector containing all the images on the string
+        mueller potential; 
+        int iter_counter; //Check number of iterations
+        
+        //Function declarations
 
-    //Vectors and important objects
-    clock_t start, end;
-    time_t sim_time;
-    parameters sim; 
-    vector<image> swarm_string; //Vector containing all the images on the string
-
-    //Function declarations
-
-    Swarm_method(); //Constructor
-    void run_swarm(); //Run the simulation
-    void read_input(); //Read input
-    void initialize(); //Initialize the system
-    void load_string(); //Load a full initial string
-    void write_string(); //Write the full string
-    void restrained_sampling(); //Do restrained sampling for equilibrium states
-    void generate_swarms(); //Generate swarms of unbiased trajectories
-    void evolve_cv(); //Evolves the CVs using an estimate of the drift
-    void reparametrize(); //Reparametrize the string
+        Swarm_method(); //Constructor
+        void run_swarm(); //Run the simulation
+        void read_input(); //Read input
+        void initialize(); //Initialize the system
+        void load_string(); //Load a full initial string
+        void write_string(); //Write the full string
+        void restrained_sampling(); //Do restrained sampling for equilibrium states
+        void generate_swarms(); //Generate swarms of unbiased trajectories
+        void evolve_cv(); //Evolves the CVs using an estimate of the drift
+        void reparametrize(); //Reparametrize the string
+        void write_log(); //Write a simulation log
 };
 
 #endif
