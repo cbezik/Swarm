@@ -9,8 +9,8 @@ with open("string.txt") as f:
 
 data = data.split('\n')
 
-x = [row.split(' ')[0] for row in data]
-y = [row.split(' ')[1] for row in data]
+x = [row.split(' ')[0] for row in data[:-1]]
+y = [row.split(' ')[1] for row in data[:-1]]
 
 fig = plt.figure()
 

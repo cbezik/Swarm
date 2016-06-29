@@ -39,14 +39,17 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    myswarm.image_number = image; //Identify each image 
+    myswarm->image_number = image; //Identify each image 
     myswarm->run_swarm();
 
     MPI_Finalize();
 
     //End parallel code
-
-    cout << "Simulation done" << endl;
+    
+    if(myswarm->image_number == 0)
+    {
+        cout << "Simulation done" << endl;
+    }
     delete myswarm;
     return 0;
 }

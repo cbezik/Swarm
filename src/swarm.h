@@ -47,6 +47,7 @@ class Swarm_method
         void evolve_cv(); //Evolves the CVs using an estimate of the drift
         void reparametrize(); //Reparametrize the string
         void write_log(); //Write a simulation log
+        void clear_output(); //Clear the output files
 };
 
 #endif

@@ -1,6 +1,6 @@
 /***** String method info *****/
 
-24      Number of Images
+4      Number of Images
 0       Load initial string?  0=no, specify initial states (initial.state, final.state) ; 1=yes, load entire string
 1000     Maximum number of iterations
 1000    Number of trajectories per swarm
