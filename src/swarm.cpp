@@ -23,7 +23,10 @@
 #include "swarm.h"
 #include "structs.h"
 #include "mueller.h"
-#include "spline.h" i
+#include "spline.h" 
+#include <mpi.h>
+
+#define BOSS 0 //Node zero will control communication across other nodes
 
 
 using namespace std;
@@ -167,8 +170,9 @@ void Swarm_method::write_string()
 void Swarm_method::run_swarm()
 {//Run the simulation
     int i, j; //Loop indexing
-    vector<double> displacements_x = vector<double>(sim.images); //For checking displacement over the course of an interation
-    vector<double> displacements_y = vector<double>(sim.images);
+    MPI_Status stat; 
+    //vector<double> displacements_x = vector<double>(sim.images); //For checking displacement over the course of an interation
+    //vector<double> displacements_y = vector<double>(sim.images);
 
     iter_counter = 1; 
 
@@ -177,12 +181,19 @@ void Swarm_method::run_swarm()
 
     for(i = 1; i <= sim.iterations; i++)
     {
+        if(image_number == BOSS)
+        {
+            cout << "Starting iteration " << iter_counter << endl;
+        }
+        MPI_Barrier(MPI_COMM_WORLD); //Block until at this point
         //Run simulation
-        for(j = 0; j <= sim.images; j++)
+        /*for(j = 0; j <= sim.images; j++)
         {
             displacements_x[j] = swarm_string[j].x;
             displacements_y[j] = swarm_string[j].y; 
-        }
+        }*/
+
+        //Following are independent processes
         restrained_sampling(); //Do restrained sampling for equilibrium states 
         generate_swarms(); //Generate swarms of unrestrained trajectories
         evolve_cv(); //Estimate drift and evolve CVs
@@ -190,14 +201,14 @@ void Swarm_method::run_swarm()
 
         if(iter_counter % 10 == 0)
         {
-            cout << "Iteration: " << iter_counter << endl; 
+            cout << "Iteration: " << iter_counter << " , "; 
             write_string();
             end = clock();
             cout << "Time elapsed: " << (double)(end - start) / CLOCKS_PER_SEC << " Seconds" << endl;
         }
 
         //Check convergence
-        for(j = 0; j <= sim.images; j++)
+        /*for(j = 0; j <= sim.images; j++)
         {
             displacements_x[j] *= -1;
             displacements_y[j] *= -1;
@@ -209,7 +220,7 @@ void Swarm_method::run_swarm()
             cout << "Converged at iteration " << iter_counter << endl;
             break; //Exit loop if converged
         }
-        
+        */
         iter_counter++;
     }
 
@@ -410,77 +421,17 @@ void Swarm_method::reparametrize()
         //cout << alpha_i << endl; 
         double x = sx(alpha_i);
         double y = sy(alpha_i);
+        /*if(i == 0 || i == sim.images - 1)
+        {//Debugging
+            cout << swarm_string[i].x << " " << swarm_string[i].y << endl;
+        }*/
         swarm_string[i].x = x;
         swarm_string[i].y = y;
-        //cout << x << " " << y << endl;
+        /*if(i == 0 || i == sim.images - 1)
+        {//Debugging
+            cout << swarm_string[i].x << " " << swarm_string[i].y << endl;
+        }*/
     }
-    //exit(EXIT_FAILURE); 
-
-    //Enforce a piecewise linear interpolation such that all points are linearly equidistant (in each collective variable)
-
-    /*int i; //Loop indexing
-    int k; //For reparametrization algorithm
-    double dx, dy, dr2; //X distance, y distance, and square distance
-
-    //Reparameterize
-    vector<double> length = vector<double>(sim.images); //The length function is the length, up to each image, of the piecewise linear curve interpolated through the images
-    length[0] = 0; //By definition
-    for(i = 1; i < sim.images; i++)
-    {
-        dx = swarm_string[i].x - swarm_string[i-1].x;
-        dy = swarm_string[i].y - swarm_string[i-1].y; 
-        dr2 = dx*dx+dy*dy;
-        length[i] = length[i-1] + sqrtl(dr2); //Build up the lengthx vector
-    }
-    vector<double> sm = vector<double>(sim.images);//sm vector defined in the algorithm of eq 49 and 50 of Maragliano et al (2006)
-    sm[0] = 0; //Don't use this value
-    for(i = 1; i < sim.images; i++)
-    {
-        sm[i] = (i)*length[sim.images-1] / (sim.images - 1); //Build up the sm vector
-    }
-    //Reparametrize points, excluding the ends
-    for(i = 1; i < sim.images - 1; i++)
-    {
-        //Select k such that L(k-1) < s(m) <= L(k)
-        k = 1; 
-        while(!(length[k-1] < sm[i] && sm[i] <= length[k]))
-        {
-            k++; //Find the correct value of k
-        }
-        //Reparametrize
-        dx = swarm_string[k].x - swarm_string[k-1].x;
-        dy = swarm_string[k].y - swarm_string[k-1].y;
-        dr2 = dx*dx+dy*dy;
-        swarm_string[i].x = swarm_string[k-1].x + (sm[i]-length[k-1])*((swarm_string[k].x - swarm_string[k-1].x)/(sqrtl(dr2))); //Linear reparametrization algorithm
-        swarm_string[i].y = swarm_string[k-1].y + (sm[i]-length[k-1])*((swarm_string[k].y - swarm_string[k-1].y)/(sqrtl(dr2))); 
-    }
-
-    //Reparametrize y
-    vector<double> lengthy = vector<double>(sim.images); //The length function is the length, up to each image, of the piecewise linear curve interpolated through the images
-    lengthy[0] = 0; //By definition
-    for(i = 1; i < sim.images; i++)
-    {
-        lengthy[i] = lengthy[i-1] + (swarm_string[i].y - swarm_string[i-1].y); //Build up the lengthx vector
-    }
-    vector<double> sm_y = vector<double>(sim.images);//sm vector defined in the algorithm of eq 49 and 50 of Maragliano et al (2006)
-    sm_y[0] = 0; //Don't use this value
-    for(i = 1; i < sim.images; i++)
-    {
-        sm_y[i] = (i)*lengthy[sim.images-1] / (sim.images - 1); //Build up the sm vector
-    }
-    //Reparametrize points, excluding the ends
-    for(i = 1; i < sim.images - 1; i++)
-    {
-        //Select k such that L(k-1) < s(m) <= L(k)
-        k = 1; 
-        while(!(lengthy[k-1] < sm_y[i] && sm_y[i] <= lengthy[k]))
-        {
-            k++; //Find the correct value of k
-        }
-        //Reparametrize
-        swarm_string[i].y = swarm_string[k-1].y + (sm_y[i]-lengthy[k-1])*((swarm_string[k].y - swarm_string[k-1].y)/(abs(swarm_string[k].y - swarm_string[k-1].y))); //Linear reparametrization algorithm
-    }
-    */
 }
 
 void Swarm_method::write_log()

@@ -12,7 +12,9 @@
  * *************************************/
 #include "swarm.h"
 #include "structs.h"
-
+#include <mpi.h>
+#include "mueller.h"
+#include <iostream>
 
 using namespace std;
 
@@ -20,10 +22,31 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    Swarm_method *myswarm;
-    myswarm = new Swarm_method();
+    int image, num_tasks; //For MPI
+    Swarm_method *myswarm; 
+    myswarm = new Swarm_method(); 
+    
+    //Begin parallel code
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &image);
+    MPI_Comm_size(MPI_COMM_WORLD, &num_tasks); 
+
+    if(num_tasks != myswarm->sim.images)
+    {//Break if number of tasks isn't equal to the number of nodes
+        cout << "Number of images not equal to number of processors" << endl;
+        MPI_Abort(MPI_COMM_WORLD, 0);
+        exit(EXIT_FAILURE);
+    }
+
+    myswarm.image_number = image; //Identify each image 
     myswarm->run_swarm();
 
+    MPI_Finalize();
+
+    //End parallel code
+
+    cout << "Simulation done" << endl;
     delete myswarm;
     return 0;
 }

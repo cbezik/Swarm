@@ -18,6 +18,7 @@
 #include <random>
 #include "structs.h"
 #include "mueller.h"
+#include <mpi.h>
 
 using namespace std;
 
@@ -30,7 +31,8 @@ class Swarm_method
         parameters sim; 
         vector<image> swarm_string; //Vector containing all the images on the string
         mueller potential; 
-        int iter_counter; //Check number of iterations
+        int iter_counter; //Check number of iterationsi
+        int image_number; //Number of the image for parallel code
         
         //Function declarations
 

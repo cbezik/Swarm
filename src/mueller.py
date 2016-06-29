@@ -20,7 +20,7 @@ ax1.set_title("String on Mueller Potential")
 ax1.set_xlabel('X')
 ax1.set_ylabel('Y')
 
-ax1.plot(x,y, c='r', label='Images')
+ax1.plot(x,y, 'ro-', label='Images')
 
 leg = ax1.legend()
 
@@ -45,6 +45,8 @@ for j in range(0,4):
     yy2 = np.power(yy-YY[j],2)
     V1 = V1 + AA[j]*np.exp(aa[j]*xx2+bb[j]*xxyy+cc[j]*yy2)
 
-CS = plt.contour(xx, yy, np.minimum(V1,200), 45)
+V1[V1 > 200] = 200;
+
+CS = plt.contour(xx, yy, V1, 40)
 
 plt.show()
