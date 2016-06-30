@@ -27,12 +27,12 @@ class mueller
         vector<double> gradient; //Contains x and y component of the gradient
 
         //Constants for the potential
-        vector<double> A = vector<double>(4); 
-        vector<double> b = vector<double>(4);
-        vector<double> x0 = vector<double>(4);
-        vector<double> a = vector<double>(4);
-        vector<double> c = vector<double>(4);
-        vector<double> y0 = vector<double>(4);
+        vector<double> A;// = vector<double>(4); 
+        vector<double> b;// = vector<double>(4);
+        vector<double> x0;// = vector<double>(4);
+        vector<double> a;// = vector<double>(4);
+        vector<double> c;// = vector<double>(4);
+        vector<double> y0;// = vector<double>(4);
 
 
         //Functions

@@ -9,7 +9,7 @@
  *
  * ***************************/
 
-
+#include <mpi.h>
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -24,7 +24,6 @@
 #include "structs.h"
 #include "mueller.h"
 #include "spline.h" 
-#include <mpi.h>
 
 #define BOSS 0 //Node zero will control communication across other nodes
 

@@ -1,5 +1,5 @@
 CMPLR = mpic++
-CFLGS = -O3 -w -std=c++11 -g
+CFLGS = -O3 -w -g -std=c++11
 
 EXECU = ./swarm
 

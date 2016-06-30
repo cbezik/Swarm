@@ -25,7 +25,13 @@ mueller::mueller()
    gradient[1] = 0.0;
    
    int i; //Loop indexing
-   
+   A.resize(4);
+   b.resize(4);
+   x0.resize(4);
+   a.resize(4);
+   c.resize(4);
+   y0.resize(4);
+
    for(i = 0; i <= 3; i++)
    {//Initialize the constants
        if(i == 0)

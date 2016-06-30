@@ -13,12 +13,13 @@
  *
  * ********************************/
 
+#include <mpi.h>
 #include <ctime>
 #include <vector>
 #include <random>
 #include "structs.h"
 #include "mueller.h"
-#include <mpi.h>
+
 
 using namespace std;
 
